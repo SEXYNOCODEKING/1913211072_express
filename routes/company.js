@@ -9,12 +9,12 @@ router.get('/', function(req, res, next) {
             province:"Thai",
             Postalcode:10200
         }},
-        {name:"GET RICH",
+        {name:"GET Me RICH",
         address : {
             province:"Thai",
             Postalcode:10200
         }},
-        {name:"Happy.Inc",
+        {name:"P.KarnCode",
         address : {
             province:"Thai",
             Postalcode:10200
