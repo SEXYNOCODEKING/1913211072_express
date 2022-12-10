@@ -1,7 +1,12 @@
 var express = require('express');
 var router = express.Router();
+const companycontroller = require('../controllers/companyController')
 
-router.get('/', function(req, res, next) {
+router.get('/',companycontroller.index);
+
+
+
+/*router.get('/', function(req, res, next) {
     res.status(200).json({ data : [
         {id:1,
         name : "NOCODE Company",
@@ -20,7 +25,8 @@ router.get('/', function(req, res, next) {
             Postalcode:10200
         }}]
     })
-   })
+  })
+*/
 
 
 module.exports = router;
