@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var company = require('./routes/company');
+var staffRouter = require('./routes/staff');
 
 var app = express();
 mongoose.connect('mongodb+srv://superdev:Dqfree1594@1913211072-pond.rpxlrfi.mongodb.net/restfulapi?retryWrites=true&w=majority',{useNewUrlParser: true, useUnifiedTopology: true})
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/company',company );
+app.use('/staff',staffRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
