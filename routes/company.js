@@ -4,6 +4,11 @@ const companycontroller = require('../controllers/companyController')
 
 router.get('/',companycontroller.index);
 
+router.post('/',companycontroller.insert);
+
+router.delete('/:id',companycontroller.delete);
+
+router.put('/:id',companycontroller.update);
 
 
 /*router.get('/', function(req, res, next) {
