@@ -6,5 +6,7 @@ router.get('/',shopcontroller.index);
 
 router.get('/menu',shopcontroller.menu);
 
+router.get('/:id',shopcontroller.id);
+
 
 module.exports = router;

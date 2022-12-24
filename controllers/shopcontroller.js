@@ -4,6 +4,8 @@ const { Error } = require('mongoose')
 const Shop = require('../model/shop')
 const Menu = require('../model/menu')
 
+
+
 exports.index = async(req,res,next) => {
 
     
@@ -24,13 +26,22 @@ exports.index = async(req,res,next) => {
          
             
         }
-        exports.menu = async (req, res, next) => {
+exports.menu = async (req, res, next) => {
 
-            const menu = await Menu.find()
-        
-            res.status(200).json({
+    //  const menu = await Menu.find().select('+name').where('Price').gt(200)
+    const menu = await Menu.find().populate('shop')
+
+    res.status(200).json({
               data: menu
-            })
-          }
+    })
+}
+
+exports.id = async (req, res, next) => {
+    const {id}=req.params
+    const menu = await Shop.find({_id: id}).populate('menu')
+    res.status(200).json({
+              data: menu
+    })
+}
         
         

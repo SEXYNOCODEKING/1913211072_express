@@ -11,7 +11,15 @@ const shopSchema = new Schema({
     // createdat , updatedat ไม่ต้องประกาศ
     
   },{timestamps:true,
+    toJSON:{virtuals:true},
      collection:"shops"}); //ต้องตรงกันกับฐานข้อมูล
+
+     shopSchema.virtual('menu', {
+        ref: 'Menu', //จาก
+        localField: '_id', // เทียบด้วย
+        foreignField: 'shop', //เทียบกับ
+      }); //ดึงเป็น ชุด
+
 
   const shop = mongoose.model("Shop",shopSchema)
   
