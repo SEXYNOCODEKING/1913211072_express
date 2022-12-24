@@ -13,6 +13,6 @@ const shopSchema = new Schema({
   },{timestamps:true,
      collection:"shops"}); //ต้องตรงกันกับฐานข้อมูล
 
-  const shop = mongoose.model("Shop",staffSchema)
+  const shop = mongoose.model("Shop",shopSchema)
   
   module.exports = shop
