@@ -1,24 +1,36 @@
 
 const { Error } = require('mongoose')
+
 const Shop = require('../model/shop')
+const Menu = require('../model/menu')
 
 exports.index = async(req,res,next) => {
 
-    try{
-     const {id}=req.params
-     const shop =await Shop.find()
+    
+     const shops =await Shop.find().select('name photo location').sort({_id:-1})
      
-     if(!shop){
-         throw new Error('ไม่พบผู้ใช้งาน')
-     }
- 
+     const shopWithPhotoDomain = shops.map((shop,index)=>{ 
+        return{
+            id:shop._id,
+            name:shop.name,
+            photo:'http://localhost:3000/images/'+shop.photo,
+            location:shop.location,
+        }
+     })
+    
          res.status(200).json({
-             data:shop
+             data:shopWithPhotoDomain
          })
          
-    }catch(error){
-         res.status(400).json({
-             error:"เกิดข้อผิดพลาด : " + error.message
-          })
-    }
- }
+            
+        }
+        exports.menu = async (req, res, next) => {
+
+            const menu = await Menu.find()
+        
+            res.status(200).json({
+              data: menu
+            })
+          }
+        
+        

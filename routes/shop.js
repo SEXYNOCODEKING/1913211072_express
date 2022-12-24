@@ -4,5 +4,7 @@ const shopcontroller = require('../controllers/shopcontroller')
 
 router.get('/',shopcontroller.index);
 
+router.get('/menu',shopcontroller.menu);
+
 
 module.exports = router;
