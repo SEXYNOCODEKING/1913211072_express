@@ -13,11 +13,11 @@ const company =await Company.find()
 
 exports.insert = async(req,res,next) => {
 
-    const {name,address} = req.body
+    const {name,address:{province}} = req.body
    
     let company = new Company({
         name: name,
-        address:address
+        address:{province}
     });
 
     await company.save()
@@ -51,12 +51,12 @@ exports.insert = async(req,res,next) => {
 
         try{
             const {id}=req.params
-            const {name,address} = req.body
+            const {name,address:{province}} = req.body
           
 
             const company = await Company.updateOne({_id:id},{
                 name:name,
-                address:address
+                address:{province: province}
             })
             if(!company){throw new Error('โดน!!!')}else{
 

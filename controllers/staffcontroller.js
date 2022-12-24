@@ -46,6 +46,7 @@ exports.update = async(req,res,next) => {
         })
         
         console.log(staff)
+        
             res.status(200).json({
                 message:'เพิ่มข้อมูลเรียบแล้ว',
             })
