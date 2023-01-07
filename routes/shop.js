@@ -8,5 +8,7 @@ router.get('/menu',shopcontroller.menu);
 
 router.get('/:id',shopcontroller.id);
 
+router.post('/',shopcontroller.insert);
+
 
 module.exports = router;

@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 const staffSchema = new Schema({
     name:   {type:String ,require:true,trim:true},
     salary: {type:Number}, //long ver.
+    photo: {type:String ,default:'nopic.png'},
     created:{type:Date,default:Date.now}
     
   },{collection:"staffs"}); //ต้องตรงกันกับฐานข้อมูล
