@@ -3,6 +3,7 @@ const { Error } = require('mongoose')
 
 const Shop = require('../model/shop')
 const Menu = require('../model/menu')
+const config = require('../config/index')
 
 
 
@@ -15,7 +16,7 @@ exports.index = async(req,res,next) => {
         return{
             id:shop._id,
             name:shop.name,
-            photo:'http://localhost:3000/images/'+shop.photo,
+            photo:config.IMG_SHOP+shop.photo,
             location:shop.location,
         }
      })
