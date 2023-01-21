@@ -33,17 +33,14 @@ exports.insert = async(req,res,next) => {
          const {id}=req.params
          const company =await Company.deleteOne({_id:id})
          
-         if (company.deleteCount === 0){throw new Error('ไม่พบข้อมูลผู้ใช้งาน')}
-         else{
-            res.status(200).json({
-                message:'ลบคนนึงเสร็จ'
-            })
+         if (company.deleteCount === 0){
+         const error = new Error("ไม่สามารถลบข้อมูลได้ / ไม่พบข้อมูลผู้ใช้งาน");
+         error.statusCode = 400;
+         throw error;
          }
              
         }catch(error){
-             res.status(400).json({
-                 error:"เกิดข้อผิดพลาด : " + error.message
-              })
+            next(error);
         }
      }
 
@@ -58,15 +55,12 @@ exports.insert = async(req,res,next) => {
                 name:name,
                 address:{province: province}
             })
-            if(!company){throw new Error('โดน!!!')}else{
-
-                res.status(200).json({
-                    message:'เพิ่มข้อมูลเรียบแล้ว',
-                })}
+            if(!company){ 
+            const error = new Error("ไม่พบข้อมูล");
+            error.statusCode = 400;
+            throw error;}
              
         }catch(error){
-             res.status(400).json({
-                 error:"เกิดข้อผิดพลาด : " + error.message
-              })
+            next(error);
         }
      }

@@ -3,6 +3,7 @@ const path = require('path');
 const uuidv4 = require('uuid');
 const { promisify } = require('util')
 const writeFileAsync = promisify(fs.writeFile)
+const { validationResult } = require("express-validator");
 
 const { Error } = require('mongoose')
 const staff = require('../model/staff')
@@ -25,7 +26,9 @@ exports.index = async(req,res,next) => {
      })
     
     if(!staff){
-        throw new Error('ไม่พบผู้ใช้งาน')
+        const error = new Error("ไม่พบผู้ใช้งาน");
+        error.statusCode = 400;
+        throw error;
     }
 
         res.status(200).json({
@@ -33,9 +36,7 @@ exports.index = async(req,res,next) => {
         })
         
    }catch(error){
-        res.status(400).json({
-            error:"เกิดข้อผิดพลาด : " + error.message
-         })
+    next(error);
    }
 }
 
@@ -67,9 +68,7 @@ exports.update = async(req,res,next) => {
             })
          
     }catch(error){
-         res.status(400).json({
-             error:"เกิดข้อผิดพลาด : " + error.message
-          })
+        next(error);
     }
  }
 
@@ -79,19 +78,16 @@ exports.delete = async(req,res,next) => {
      const {id}=req.params
      const staff =await Staff.deleteOne({_id:id})
      
-     if (staff.deleteCount === 0){throw new Error('ไม่พบข้อมูลผู้ใช้งาน')}
-     else{
-        res.status(200).json({
-            message:'ลบเกลี้ยงคนนึงแล้ว'
-        })
+     if (staff.deleteCount === 0){
+     const error = new Error("ไม่สามารถลบข้อมูลได้ / ไม่พบข้อมูลผู้ใช้งาน");
+     error.statusCode = 400;
+     throw error;
      }
 
      console.log(staff)
          
     }catch(error){
-         res.status(400).json({
-             error:"เกิดข้อผิดพลาด : " + error.message
-          })
+        next(error);
     }
  }
 
@@ -104,7 +100,9 @@ exports.show = async(req,res,next) => {
      })
      
      if(!staff){
-         throw new Error('ไม่พบผู้ใช้งาน')
+        const error = new Error("ไม่พบผู้ใช้งาน");
+        error.statusCode = 400;
+        throw error;
      }
  
          res.status(200).json({
@@ -112,54 +110,35 @@ exports.show = async(req,res,next) => {
          })
          
     }catch(error){
-         res.status(400).json({
-             error:"เกิดข้อผิดพลาด : " + error.message
-          })
+        next(error);
     }
  }
 
 exports.insert = async(req,res,next) => {
-
-    const {name,salary,photo} = req.body
-   
-    let staff = new Staff({
+    try {
+      const { name, salary, photo } = req.body;
+      // Validation
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const error = new Error("Input is incorrect");
+        error.statusCode = 422;
+        error.validation = errors.array();
+        throw error;
+      }
+      const photoName = photo ? await saveImageToDisk(photo) : undefined;
+      let staffinsert = staff({
         name: name,
-        salary:salary,
-        photo:await saveImageToDisk(photo),
-    });
-
-    await staff.save()
-    
-        res.status(200).json({
-            message:'เพิ่มข้อมูลเรียบแล้ว',
-        })
+        salary: salary,
+        photo: photoName,
+      });
+      const result = await staffinsert.save();
+      return res
+        .status(200)
+        .json({ message: `Insert Successful: ${result != null}` });
+    } catch (e) {
+      next(e);
     }
-
-    async function saveImageToDisk(baseImage) {
-        //หา path จริงของโปรเจค
-        const projectPath = path.resolve('./') ;
-        //โฟลเดอร์และ path ของการอัปโหลด
-        const uploadPath = `${projectPath}/public/images/`;
-    
-        //หานามสกุลไฟล์
-        const ext = baseImage.substring(baseImage.indexOf("/")+1, baseImage.indexOf(";base64"));
-    
-        //สุ่มชื่อไฟล์ใหม่ พร้อมนามสกุล
-        let filename = '';
-        if (ext === 'svg+xml') {
-            filename = `${uuidv4.v4()}.svg`;
-        } else {
-            filename = `${uuidv4.v4()}.${ext}`;
-        }
-    
-        //Extract base64 data ออกมา
-        let image = decodeBase64Image(baseImage);
-    
-        //เขียนไฟล์ไปไว้ที่ path
-        await writeFileAsync(uploadPath+filename, image.data, 'base64');
-        //return ชื่อไฟล์ใหม่ออกไป
-        return filename;
-    }
+  };
     
     function decodeBase64Image(base64Str) {
         var matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);

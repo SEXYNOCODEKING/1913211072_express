@@ -12,6 +12,8 @@ var company = require('./routes/company');
 var staffRouter = require('./routes/staff');
 var shopRouter = require('./routes/shop');
 
+const errorHandler = require('./middleware/errorHandler');
+
 var app = express();
 mongoose.connect(config.MONGODB_URI,{useNewUrlParser: true, useUnifiedTopology: true})
 
@@ -33,6 +35,8 @@ app.use('/users', usersRouter);
 app.use('/company',company );
 app.use('/staff',staffRouter);
 app.use('/shop',shopRouter);
+
+app.use(errorHandler);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
