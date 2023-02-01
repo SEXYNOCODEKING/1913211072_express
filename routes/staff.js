@@ -16,6 +16,6 @@ router.post('/' ,
 ]
 , staffcontroller.insert);
 
-router.delete('/:id',staffcontroller.delete);
+router.delete('/:id',staffcontroller.destroy);
 
 module.exports = router;

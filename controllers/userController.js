@@ -1,5 +1,9 @@
 const { validationResult } = require("express-validator");
-const { user } = require("../model/user");
+const User = require("../model/user");
+const jwt = require('jsonwebtoken')
+const config = require('../config/index')
+ 
+
 
 exports.index = (req, res, next) => {
     //res.send('MCU');
@@ -31,6 +35,8 @@ exports.bio =  (req, res, next) => {
         error.validation = errors.array();
         throw error;
       }
+
+
   
       const existEmail = await User.findOne({ email: email });
       if (existEmail) {
@@ -53,3 +59,47 @@ exports.bio =  (req, res, next) => {
       next(error);
     }
   };
+
+  exports.login = async (req,res,next) => {
+    try {
+      const { email, password } = req.body;
+  
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const error = new Error("Error")
+        error.statusCode = 422 
+        error.validation = errors.array()
+        throw error
+      }
+      
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        const error = new Error("ไม่มีผู้ใช้นี้")
+        error.statusCode = 400
+        throw error
+      }
+  
+      const isValid = await user.checkPassword(password);
+    if (!isValid) {
+      const error = new Error("รหัสผิด");
+      error.statusCode = 401;
+      throw error;
+    }
+  
+      //create token
+      const token = await jwt.sign({
+        id:user._id,
+        role:user.role
+      },config.KEY,{expiresIn: "5h"})
+  
+      const expire_in = jwt.decode(token)
+  
+      res.status(201).json({
+        access_token:token,
+        expire_in: expire_in.exp,
+        token_type: 'Bearer'
+      });
+    } catch (error) {
+      next(error)
+    }
+  }
