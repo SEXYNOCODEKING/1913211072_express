@@ -1,7 +1,8 @@
 const { validationResult } = require("express-validator");
 const User = require("../model/user");
 const jwt = require('jsonwebtoken')
-const config = require('../config/index')
+const config = require('../config/index');
+const user = require("../model/user");
  
 
 
@@ -102,4 +103,15 @@ exports.bio =  (req, res, next) => {
     } catch (error) {
       next(error)
     }
+  }
+
+  exports.profile = (req, res, next) => {
+    //destructer
+    const {role,name,email}=req.user
+
+    res.status(200).json({
+      name:name,
+      email:email,
+      role:role
+     })
   }
