@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 const staffcontroller = require('../controllers/staffcontroller')
 const { body } = require("express-validator");
+const passportJWT = require('../middleware/passportJWT')
 
-router.get('/',staffcontroller.index);//locahost/3000/id
+router.get('/',[passportJWT.isLogin],staffcontroller.index);//locahost/3000/id
 
 router.get('/:id',staffcontroller.show);
 
