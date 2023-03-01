@@ -3,11 +3,7 @@ var router = express.Router();
 const userController = require('../controllers/userController')
 const { body } = require('express-validator');
 const passportJWT=require('../middleware/passportJWT')
-
-/* GET users listing. */
-router.get('/',userController.index );
-
-router.get('/bio',userController.bio);
+const checkAdmin = require('../middleware/checkAdmin');
 
 router.post('/',[
     body('name').not().isEmpty().withMessage("กรุณาพิมพ์ชื่อ-สกุล"),
@@ -35,6 +31,10 @@ router.post(
     userController.login
   );
 
-  router.get('/me',[passportJWT.isLogin],userController.profile)
+  router.put('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.update);
+
+  router.delete('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.deleteuser);
+
+  router.get('/me',[passportJWT.isLogin],userController.getuser);
 
 module.exports = router;

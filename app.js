@@ -9,9 +9,7 @@ const passport = require('passport')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var company = require('./routes/company');
-var staffRouter = require('./routes/staff');
-var shopRouter = require('./routes/shop');
+var productRouter = require('./routes/product');
 
 const errorHandler = require('./middleware/errorHandler');
 
@@ -35,9 +33,8 @@ app.use(passport.initialize())
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/company',company );
-app.use('/staff',staffRouter);
-app.use('/shop',shopRouter);
+app.use('/product',productRouter);
+
 
 
 app.use(errorHandler);

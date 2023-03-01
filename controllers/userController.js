@@ -1,117 +1,148 @@
-const { validationResult } = require("express-validator");
-const User = require("../model/user");
+const User = require("../model/userModel")
+const {validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
-const config = require('../config/index');
-const user = require("../model/user");
- 
+const config = require('../config/index')
 
+exports.register = async (req, res, next) => {
+    try{
+    const {name, email, password} = req.body
 
-exports.index = (req, res, next) => {
-    //res.send('MCU');
-    res.status(200).json({
-      full_name:'Thanawat Prapassuwan'
-     })
-  }
-
-exports.bio =  (req, res, next) => {
-    //res.send('MCU');
-    res.status(200).json({
-      full_name:'Thanawat Prapassuwan',
-      nickname:'NOCODEKING',
-      hobby:'NOCODING',
-      gitusername:"SEXYNOCODEKING"
-     })
-  }
-
-
-  exports.register = async (req, res, next) => {
-    try {
-      const { name, email, password } = req.body;
-  
-      //validation
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new Error("ข้อมูลที่ได้รับมาไม่ถูกต้อง");
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error("The infomation recieved is wrong. / ข้อมูลผิดพลาด")
         error.statusCode = 422;
         error.validation = errors.array();
         throw error;
-      }
+    }
+    
+    const existemail = await User.findOne({email: email})
 
-
-  
-      const existEmail = await User.findOne({ email: email });
-      if (existEmail) {
-        const error = new Error("อีเมลนี้มีผู้ใช้งานในระบบแล้ว");
+    if(existemail){
+        const error = new Error("E-mail is already in the system. / มีอีเมลล์นี้ในระบบแล้ว")
         error.statusCode = 400;
         throw error;
-      }
-  
-      let user = new User();
-      user.name = name;
-      user.email = email;
-      user.password = await user.encryptPassword(password);
-  
-      await user.save();
-  
-      res.status(201).json({
-        message: "ลงทะเบียนเรียบร้อยแล้ว",
-      });
-    } catch (error) {
-      next(error);
     }
-  };
 
-  exports.login = async (req,res,next) => {
-    try {
-      const { email, password } = req.body;
-  
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new Error("Error")
-        error.statusCode = 422 
-        error.validation = errors.array()
-        throw error
-      }
-      
-      const user = await User.findOne({ email: email });
-      if (!user) {
-        const error = new Error("ไม่มีผู้ใช้นี้")
-        error.statusCode = 400
-        throw error
-      }
-  
-      const isValid = await user.checkPassword(password);
-    if (!isValid) {
-      const error = new Error("รหัสผิด");
-      error.statusCode = 401;
-      throw error;
-    }
-  
-      //create token
-      const token = await jwt.sign({
-        id:user._id,
-        role:user.role
-      },config.KEY,{expiresIn: "5h"})
-  
-      const expire_in = jwt.decode(token)
-  
-      res.status(201).json({
-        access_token:token,
-        expire_in: expire_in.exp,
-        token_type: 'Bearer'
-      });
-    } catch (error) {
-      next(error)
-    }
-  }
+    let user = new User();
+    user.name = name
+    user.email = email
+    user.password = await user.encryptPassword(password)
 
-  exports.profile = (req, res, next) => {
-    //destructer
-    const {role,name,email}=req.user
+    await user.save()
+    res.status(200).json({
+        message: "Registered. / ลงทะเบียนเรียบร้อย"
+    })
+    } catch (error){
+    next(error)
+    }
+}
+
+//user login
+exports.login = async(req, res, next) => {
+    try{
+    const {email, password} = req.body
+
+    //validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error("The infomation recived is wrong. / ข้อมูลผิดพลาด")
+        error.statusCode = 422;
+        error.validation = errors.array();
+        throw error;
+    }
+
+    //check email isExist
+    const existuser = await User.findOne({email: email})
+
+    if(!existuser){
+        const error = new Error("E-mail is not exist in the system. / อีเมลล์ไม่มีในระบบ")
+        error.statusCode = 404;
+        throw error;
+    }
+
+    //check password
+    const isValid = await existuser.checkPassword(password)
+
+    if(!isValid){
+        const error = new Error("Wrong password. / รหัสผ่านไม่ถูกต้อง")
+        error.statusCode = 401;
+        throw error;
+    }
+
+    //creat token
+    const token = await jwt.sign({
+        id: existuser._id,
+        role: existuser.role,
+    }, config.TOKEN, { expiresIn: "5 days"})
+
+    const expires_in = jwt.decode(token) 
 
     res.status(200).json({
-      name:name,
-      email:email,
-      role:role
-     })
-  }
+        access_token: token,
+        expires_in: expires_in.exp,
+        token_type: 'Bearer'
+    });
+
+    } catch (error){
+    next(error)
+    }
+} 
+
+exports.getuser = async (req, res, next) => {
+
+    const prof = await User.find()
+    res.status(200).json({
+        data : prof
+    })
+}
+
+//user edit data
+exports.update = async (req, res, next) => {
+
+    try{
+        const {name, email, role} = req.body
+
+        const existuser = await User.findOne({email: email})
+
+    if(!existuser){
+        const error = new Error("This is not exsist in the system. / ผู้ใช้งานนี้ไม่มีในระบบ")
+        error.statusCode = 404;
+        throw error;
+    }
+
+        const user = await User.updateOne({email : email},{
+            name: name,
+            email: email,
+            role: role
+        });
+    
+        res.status(200).json({
+            message: 'Data updated. / แก้ไขข้อมูลเรียบร้อยแล้ว'
+        });
+    } catch (error){
+        next(error)
+    }
+}
+
+//delete user
+exports.deleteuser = async (req, res, next) => {
+
+    try{
+        const {email} = req.body
+
+        const user = await User.deleteOne({email : email});
+
+        if(user.deletedCount === 0){
+            const error = new Error('This user is not in the system. / ไม่พบข้อมูลผู้ใช้งาน')
+            error.statusCode = 400
+            throw error;
+        }else {
+            return res.status(200).json({ 
+                message: 'Data deleted. / ลบข้อมูลเรียบร้อยแล้ว',
+            });
+        }
+
+    } catch(error){
+        next(error)
+    }
+}
