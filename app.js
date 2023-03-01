@@ -11,7 +11,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var productRouter = require('./routes/product');
 
-const errorHandler = require('./middleware/errorHandler');
+const errorHandler = require('./middleware/errorHandler'); 
 
 var app = express();
 mongoose.connect(config.MONGODB_URI,{useNewUrlParser: true, useUnifiedTopology: true})

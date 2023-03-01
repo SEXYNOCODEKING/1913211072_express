@@ -10,7 +10,7 @@ const userSchema = new Schema({
 },{collection:"users"});
 
 userSchema.methods.encryptPassword = async function(password){
-    const salt = await bcrypt.genSalt(5)
+    const salt = await bcrypt.genSalt(5) 
     const hashPassword = await bcrypt.hash(password, salt)
     return hashPassword
 }

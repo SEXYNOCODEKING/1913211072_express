@@ -7,7 +7,7 @@ const opts = {}
 
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.KEY;
-//opts.issuer = 'accounts.examplesoft.com';
+//opts.issuer = 'accounts.examplesoft.com'; 
 //opts.audience = 'yoursite.net';
 passport.use(
     new JwtStrategy(opts, async(jwt_payload, done)=> {

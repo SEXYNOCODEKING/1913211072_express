@@ -9,7 +9,7 @@ const ProductSchema = new Schema({
     product_price: {type: Number, require: true, trim: true}
 
 },
-    {
+    { 
         toJSON: { virtuals: true },
         timestamps: true,
         collection: "Product"

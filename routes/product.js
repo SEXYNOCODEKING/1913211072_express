@@ -3,7 +3,7 @@ var router = express.Router();
 const productController = require('../controllers/productController');
 const { body } = require('express-validator');
 
-const passportJWT = require('../middleware/passportJWT');
+const passportJWT = require('../middleware/passportJWT'); 
 const checkAdmin = require('../middleware/checkAdmin');
 
 router.post('/productadd', [passportJWT.isLogin, checkAdmin.isAdmin,

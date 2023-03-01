@@ -33,7 +33,7 @@ router.post(
 
   router.put('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.update);
 
-  router.delete('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.deleteuser);
+  router.delete('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.deleteuser); 
 
   router.get('/me',[passportJWT.isLogin],userController.getuser);
 

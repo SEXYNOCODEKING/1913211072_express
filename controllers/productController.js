@@ -23,7 +23,7 @@ exports.getBrand = async (req, res, next) => {
         Data:data
         })
       } catch (error) {
-        next(error);
+        next(error); 
       }
     
 };

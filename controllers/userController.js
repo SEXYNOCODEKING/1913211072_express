@@ -6,7 +6,7 @@ const config = require('../config/index')
 
 exports.register = async (req, res, next) => {
     try{
-    const {name, email, password} = req.body
+    const {name, email, password} = req.body 
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

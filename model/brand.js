@@ -7,7 +7,7 @@ const brandSchema = new Schema({
 }, {
     toJSON: { virtuals: true },
     timestamps: true,
-    collection: "brand"
+    collection: "brand" 
 })
 
 

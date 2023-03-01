@@ -4,5 +4,5 @@ module.exports={
     PORT:process.env.PORT,
     MONGODB_URI:process.env.MONGODB_URI,
     DOMAIN: process.env.DOMAIN,
-    KEY: process.env.KEY
+    KEY: process.env.KEY 
 }
