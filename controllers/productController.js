@@ -1,5 +1,5 @@
-const Brand = require("../model/brandModel")
-const Product = require("../model/productModel")
+const Brand = require("../model/brand");
+const Product = require("../model/product")
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 const config = require('../config/index')
@@ -94,28 +94,28 @@ exports.addProduct = async (req, res, next) => {
         throw error;
     }
     
-    const existid = await Product.findOne({product_id: product_id})
-
+    const existid = await Product.findOne({product_id : product_id});
     if(existid){
         const error = new Error("This Serial number is already in the system. / รหัสสินค้านี้มีในระบบอยู่แล้ว")
         error.statusCode = 400;
         throw error;
     }
 
-    let prod_brand
+    const existbr = await Brand.findOne({product_brand : product_brand});
 
-    if(product_brand === ""){
-        prod_brand = "-"
-    }else{
-        prod_brand = product_brand
+    if(!existbr){
+        const error = new Error("This brand is not in the system. / แบรนด์นี้มีใม่อยู่ในระบบ")
+        error.statusCode = 400;
+        throw error;
     }
+    
 
     let product = new Product;
     product.product_id = product_id
     product.product_name = product_name
     product.product_type = product_type
     product.product_price = product_price
-    product.product_brand = prod_brand
+    product.product_brand = product_brand
 
     await product.save()
     res.status(200).json({
@@ -130,7 +130,7 @@ exports.addbrand = async (req, res, next) => {
     try{
     const {product_brand} = req.body
 
-    //validation
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const error = new Error("Received information is error. / ข้อมูลผิดพลาด")
@@ -139,7 +139,7 @@ exports.addbrand = async (req, res, next) => {
         throw error;
     }
     
-    const existid = await Brand.findOne({product_brand : product_brand})
+    const existid = await Brand.findOne({product_brand : product_brand});
 
     if(existid){
         const error = new Error("This brand is already in the system. / แบรนด์นี้มีในระบบอยู่แล้ว")

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 
 const brandSchema = new Schema({
-    brand_name: { type: String, require: true, trim: true }
+    product_brand: { type: String, require: true, trim: true }
 }, {
     toJSON: { virtuals: true },
     timestamps: true,
@@ -13,8 +13,8 @@ const brandSchema = new Schema({
 
 brandSchema.virtual('product', {
     ref: 'product', 
-    localField: '_id',
-    foreignField: 'brand_name', 
+    localField: 'product_brand',
+    foreignField: 'product_brand', 
 });
 
 const brand = mongoose.model("Brand", brandSchema);

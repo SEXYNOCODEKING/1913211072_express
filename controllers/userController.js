@@ -1,7 +1,8 @@
-const User = require("../model/userModel")
+const User = require("../model/user")
 const {validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken')
 const config = require('../config/index')
+
 
 exports.register = async (req, res, next) => {
     try{
@@ -51,17 +52,17 @@ exports.login = async(req, res, next) => {
         throw error;
     }
 
-    //check email isExist
-    const existuser = await User.findOne({email: email})
 
-    if(!existuser){
+    const user = await User.findOne({email: email})
+
+    if(!user){
         const error = new Error("E-mail is not exist in the system. / อีเมลล์ไม่มีในระบบ")
         error.statusCode = 404;
         throw error;
     }
 
     //check password
-    const isValid = await existuser.checkPassword(password)
+    const isValid = await user.checkPassword(password)
 
     if(!isValid){
         const error = new Error("Wrong password. / รหัสผ่านไม่ถูกต้อง")
@@ -71,9 +72,9 @@ exports.login = async(req, res, next) => {
 
     //creat token
     const token = await jwt.sign({
-        id: existuser._id,
-        role: existuser.role,
-    }, config.TOKEN, { expiresIn: "5 days"})
+        id: user._id,
+        role: user.role,
+    }, config.KEY, { expiresIn: "5 days"})
 
     const expires_in = jwt.decode(token) 
 
@@ -90,7 +91,7 @@ exports.login = async(req, res, next) => {
 
 exports.getuser = async (req, res, next) => {
 
-    const prof = await User.find()
+    const prof = await User.findOne()
     res.status(200).json({
         data : prof
     })
