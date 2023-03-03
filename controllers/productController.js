@@ -2,7 +2,8 @@ const Brand = require("../model/brand");
 const Product = require("../model/product")
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
-const config = require('../config/index')
+const config = require('../config/index');
+const product = require("../model/product");
 
 exports.getBrand = async (req, res, next) => {
     try {
@@ -28,12 +29,25 @@ exports.getBrand = async (req, res, next) => {
     
 };
 
-exports.getBrandProduct = async (req, res, next) => {
-
-    const data = await Brand.find().populate('product')
-    res.status(200).json({
-        data: data
-    })
+exports.getProduct_byid = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+    
+        const product = await Product.findOne({product_id : id});
+    
+        if (!product) {
+          const error = new Error("ไม่พบรายการ");
+          error.statusCode = 400;
+          throw error;
+        } else {
+          res.status(200).json({
+            data: product,
+          });
+        }
+      }
+       catch (error) {
+        next(error);
+      }
 
 }
 

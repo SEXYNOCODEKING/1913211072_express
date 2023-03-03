@@ -35,6 +35,8 @@ router.post(
 
   router.delete('/', [passportJWT.isLogin, checkAdmin.isAdmin], userController.deleteuser); 
 
-  router.get('/me',[passportJWT.isLogin],userController.getuser);
+  router.get('/me',[passportJWT.isLogin ],userController.getuser);
+
+  router.get('/all',[passportJWT.isLogin, checkAdmin.isAdmin],userController.index);
 
 module.exports = router;

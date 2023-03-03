@@ -89,12 +89,23 @@ exports.login = async(req, res, next) => {
     }
 } 
 
+exports.index = async (req, res, next) => {
+
+    const user = await User.find();
+  
+      res.status(200).json({
+          Data:user
+    })
+  };
+
 exports.getuser = async (req, res, next) => {
 
-    const prof = await User.findOne()
-    res.status(200).json({
-        data : prof
-    })
+    const{name,email,role} = req.user
+  res.status(200).json({
+    name:name,
+    email:email,
+    role:role,
+  });
 }
 
 //user edit data

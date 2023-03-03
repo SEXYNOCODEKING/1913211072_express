@@ -22,7 +22,7 @@ router.get('/getproduct', productController.getProduct);
 
 router.get('/getbrand', productController.getBrand);
 
-router.get('/', productController.getBrandProduct);
+router.get('/:id', productController.getProduct_byid);
 
 router.delete('/deleteproduct', [passportJWT.isLogin, checkAdmin.isAdmin], productController.deleteProduct);
 
